@@ -1,5 +1,7 @@
 package com.my_org.flutter_godot_widget
 
+import android.R.integer
+import android.app.ActionBar
 import android.app.Activity
 
 
@@ -74,18 +76,22 @@ class GodotStarter(context: Context, id: Int, creationParams: Map<String?, Any?>
     private var methodChannel: MethodChannel? = null
     private lateinit var flutterEngine: FlutterEngine
 
+    private var width: Int? = null;
+    private var height: Int? = null;
+    private var x: Float? = null;
+    private var y: Float? = null;
+
 
     init {
         println("init called in godotstarter")
+        width = (creationParams?.get("width") as? Double)?.toInt()
+        height = (creationParams?.get("height") as? Double)?.toInt()
+        x = (creationParams?.get("x") as? Number)?.toFloat()
+        y = (creationParams?.get("y") as? Number)?.toFloat()
         initializegodot()
     }
 
-
-
-    private fun initializegodot(){
-        
-        println("Initializinggodot")
-
+    private fun initializegodot() {
         val fragmentManager: FragmentManager = fragmentActivity.supportFragmentManager
 
         fragmentManager.registerFragmentLifecycleCallbacks(object : FragmentLifecycleCallbacks() {
@@ -152,42 +158,63 @@ class GodotStarter(context: Context, id: Int, creationParams: Map<String?, Any?>
         return godotFragment.godot ?: throw IllegalStateException("Godot instance is not initialized")
     }
 
-    override fun getView(): View { //! NATIVE
-
-       
-
+    override fun getView(): View {
         Log.d("GodotStarter", "getView called")
 
-       return if (godotFragment.view != null) {
+        return if (godotFragment.view != null) {
             Log.d("GodotStarter", "Returning existing view")
-            //val parent = fragmentActivity.supportFragmentManager.findFragmentById(R.id.godot_fragment_container)?.view
-           val parent = fragmentActivity.findViewById<FrameLayout>(android.R.id.content)
-           godotFragment.view?.let { existingView ->
-                 existingView.parent?.let { parent ->
-                     // Remove the view from its current parent if it already has one
-                     (parent as? ViewGroup)?.removeView(existingView)
-                     //(parent as? ViewGroup)?.removeAllViews()
-                     Log.d("$existingView", "removed")
-                 }
-               (parent as? ViewGroup)?.addView(godotFragment.view)
-             }
+            val parent = fragmentActivity.findViewById<FrameLayout>(android.R.id.content)
+            godotFragment.view?.let { existingView ->
+                if (existingView.parent != null) {
+                    (existingView.parent as? ViewGroup)?.removeView(existingView)
+                }
+                if (existingView.parent == null) {
+                    (parent as? ViewGroup)?.addView(godotFragment.view)
+                }
 
-            Log.d("GodotStarter", "Red view created and added to the parent")
-            godotFragment.view!!
+                Log.d("GodotStarter", "Width: ${(width ?: -1)}, Height: ${(height ?: -1)}")
+
+                existingView.layoutParams = FrameLayout.LayoutParams(
+                    width ?: FrameLayout.LayoutParams.MATCH_PARENT, // Set the desired width
+                    height ?: FrameLayout.LayoutParams.MATCH_PARENT  // Set the desired height
+                )
+
+                if (x != null)
+                {
+                    existingView.x = (x ?: 0) as Float
+                }
+
+                if (y != null)
+                {
+                    existingView.y = (y ?: 0) as Float
+                }
+
+                FlutterGodotWidgetPlugin.godotView = existingView
+
+            }
+
+            Log.d("GodotStarter", "View created and added to the parent")
+            godotFragment.requireView()
         } else {
             Log.d("GodotStarter", "Returning placeholder view, waiting for actual view to be ready")
-            // Temporarily return an empty view and use a callback to notify when the actual view is ready
             View(fragmentActivity).also { placeholder ->
                 viewReadyCallback = { actualView ->
-                    (placeholder.parent as? ViewGroup)?.removeView(placeholder)
-                    (placeholder.parent as? ViewGroup)?.addView(actualView)
+                    if (placeholder.parent != null) {
+                        (placeholder.parent as? ViewGroup)?.removeView(placeholder)
+                    }
+                    if (actualView.parent == null) {
+                        (placeholder.parent as? ViewGroup)?.addView(actualView)
+                    }
+                    actualView.layoutParams = FrameLayout.LayoutParams(
+                        FrameLayout.LayoutParams.MATCH_PARENT, // Set the desired width
+                        FrameLayout.LayoutParams.MATCH_PARENT  // Set the desired height
+                    )
                     Log.d("GodotStarter", "Actual view is now added to the parent view group")
                 }
             }
         }
-
-
     }
+
     private fun initAppPluginIfNeeded(godot: Godot) {
         if (appPlugin == null) {
             appPlugin = godotpluginMaster(godot)

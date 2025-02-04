@@ -22,7 +22,8 @@ func _process(delta):
 
 func _on_button_button_down():
 	print("btn was pressed")
-	singleton.sendData("data sent")
+	
+	singleton.sendData("display on godot==:   "+str(get_viewport().size))
 	pass # Replace with function body.
 
 func _on_BackButton_pressed():

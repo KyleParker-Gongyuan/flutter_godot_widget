@@ -239,7 +239,7 @@ class GodotStarter(context: Context, id: Int, creationParams: Map<String?, Any?>
                 val data = call.argument<String>("data")
                 println("Arguments: ${call.arguments}")
                 data?.let {
-                    /*GodotpluginMaster.send2Godot(data)*/
+                    GodotpluginMaster(godot).send2Godot(data)
                     result.success("Data sent to Godot: $data")
                 } ?: run {
                     result.error("MISSING_DATA", "Data argument is missing", null)

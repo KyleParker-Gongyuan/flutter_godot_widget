@@ -107,7 +107,7 @@ public class godotpluginMaster(godot: Godot?) :  GodotPlugin(godot), EventChanne
 
     override fun getPluginSignals() = setOf(SHOW_STRANG)
 
-    /*internal fun send2Godot(theString: String) {
+    internal fun send2Godot(theString: String) {
         print("pre send to godot")
         emitSignal(
             SHOW_STRANG.name,
@@ -116,18 +116,9 @@ public class godotpluginMaster(godot: Godot?) :  GodotPlugin(godot), EventChanne
         //eventSink!!.success("we cook")
         eventSink?.success("we cook")
 
-    }*/
-
-
-    @UsedByGodot
-    internal fun send2Godot(ad: String) {
-        runOnUiThread({
-            eventSink?.success("JONE")
-        })
-        Log.w("data","received");
-        sendDataToFlutter("DUBASS")
-
     }
+
+
 
     private fun sendDataToFlutter(FA: String) {
 

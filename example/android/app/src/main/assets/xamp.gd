@@ -1,6 +1,7 @@
 extends Node
 var singleton
-#signal flutterData (ourTextExample)
+#signal flutterData (ourExampleTxt)
+#signal get_stang(ourExampleTxt)
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -22,7 +23,6 @@ func _process(delta):
 
 func _on_button_button_down():
 	print("btn was pressed")
-	
 	singleton.sendData("display on godot==:   "+str(get_viewport().size))
 	pass # Replace with function body.
 
@@ -31,12 +31,12 @@ func _on_BackButton_pressed():
 	# Send a message to Flutter to close Godot and return to the Flutter view
 	if singleton:
 		print("singleton yes")
-		singleton.GoBack()
+		singleton.goBack()
 
 
 func examp(ourExampleTxt: String):
 	#emit_signal("FlutterData", ourExampleTxt)
 	#we send our flutter data to here
 
-	print(ourExampleTxt)
+	print("data received inside handler 'examp' for signal 'get_stang' ----> "+ourExampleTxt)
 	pass

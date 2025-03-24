@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://dfnspalmn5auf"]
 
-[ext_resource type="Script" path="res://xamp.gd" id="1_k8gig"]
+[ext_resource type="Script" uid="uid://dllwttffvk6lq" path="res://xamp.gd" id="1_k8gig"]
 
 [node name="Node" type="Node"]
 script = ExtResource("1_k8gig")
@@ -13,10 +13,10 @@ offset_right = 90.0
 offset_bottom = 94.0
 
 [node name="BackButton" type="Button" parent="."]
-text = "Back"
 offset_left = -800.0
 offset_right = -400.0
 offset_bottom = 94.0
+text = "Back"
 
-[connection signal="pressed" from="BackButton" to="." method="_on_BackButton_pressed"]
 [connection signal="button_down" from="Button" to="." method="_on_button_button_down"]
+[connection signal="pressed" from="BackButton" to="." method="_on_BackButton_pressed"]

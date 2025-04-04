@@ -1,6 +1,6 @@
 extends Node
 var singleton
-#signal flutterData (ourExampleTxt)
+signal flutterData (text: String)
 #signal get_stang(ourExampleTxt)
 
 # Called when the node enters the scene tree for the first time.
@@ -35,7 +35,7 @@ func _on_BackButton_pressed():
 
 
 func examp(ourExampleTxt: String):
-	#emit_signal("FlutterData", ourExampleTxt)
+	flutterData(ourExampleTxt)
 	#we send our flutter data to here
 
 	print("data received inside handler 'examp' for signal 'get_stang' ----> "+ourExampleTxt)

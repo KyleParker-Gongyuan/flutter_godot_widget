@@ -10,6 +10,18 @@ class MockFlutterGodotWidgetPlatform
 
   @override
   Future<String?> getPlatformVersion() => Future.value('42');
+
+  @override
+  Future<void> openGame() {
+    // TODO: implement openGame
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String?> sendData2Game(String data) {
+    // TODO: implement sendData2Game
+    throw UnimplementedError();
+  }
 }
 
 void main() {

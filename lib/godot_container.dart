@@ -1,7 +1,12 @@
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 
 class GodotContainer extends StatefulWidget {
+  const GodotContainer({super.key});
+
   @override
   _GodotContainerState createState() => _GodotContainerState();
 }
@@ -9,42 +14,56 @@ class GodotContainer extends StatefulWidget {
 class _GodotContainerState extends State<GodotContainer> {
   final GlobalKey _containerKey = GlobalKey();
   static const MethodChannel _channel = MethodChannel('flutter_godot_widget_plugin');
+  final String viewType = 'godot-view';
+  final Map<String, dynamic> creationParams = <String, dynamic>{};
 
-  @override
-  Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          _updateGodotView(constraints);
-        });
-
-        return Container(
-          key: _containerKey,
-          width: constraints.maxWidth,
-          height: constraints.maxHeight,
-          child: AndroidView(
-            viewType: 'platform-view-type',
-            layoutDirection: TextDirection.ltr,
-            creationParamsCodec: StandardMessageCodec(),
-          ),
-        );
+  Widget _getHybridGodotView() {
+    return PlatformViewLink(
+      surfaceFactory: (BuildContext context, PlatformViewController controller) {
+        return AndroidViewSurface(
+            controller: controller as AndroidViewController,
+            hitTestBehavior: PlatformViewHitTestBehavior.opaque,
+            gestureRecognizers: const <Factory<OneSequenceGestureRecognizer>>{});
       },
+      onCreatePlatformView: (PlatformViewCreationParams params) {
+        return PlatformViewsService.initExpensiveAndroidView(
+          id: params.id,
+          viewType: viewType,
+          layoutDirection: TextDirection.ltr,
+          creationParams: creationParams,
+          creationParamsCodec: const StandardMessageCodec(),
+          onFocus: () {
+            params.onFocusChanged(true);
+          },
+        )
+          ..addOnPlatformViewCreatedListener(params.onPlatformViewCreated)
+          ..create();
+      },
+      viewType: viewType,
     );
   }
 
-  /// Godot View, We pass its size and position to the native code
-  Future<void> _updateGodotView(constraints) async {
-    RenderBox? box = _containerKey.currentContext?.findRenderObject() as RenderBox?;
-    if (box == null) return;
-
-    Offset position = box.localToGlobal(Offset.zero);
-    // Size size = box.size;
-    
-    await _channel.invokeMethod('setGodotViewPositionAndSize', {
-      "x": position.dx, // X location
-      "y": position.dy, // Y location
-      "width": constraints.maxWidth.toString() == 'Infinity' ? null : constraints.maxWidth, // width
-      "height": constraints.maxHeight.toString() == 'Infinity' ? null : constraints.maxHeight, // Height
-    });
+  Widget _getVDGodotView() {
+    return AndroidView(
+      viewType: viewType,
+      // onPlatformViewCreated: (int id) {
+      //   _channel.invokeMethod('setGodotViewId', {"id": id});
+      // },
+      gestureRecognizers: const <Factory<OneSequenceGestureRecognizer>>{},
+    );
   }
+
+  Widget _getGodotView() {
+    return Container(
+      key: _containerKey,
+      child: _getVDGodotView(),
+      // child: _getHybridGodotView(),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return _getGodotView();
+  }
+
 }

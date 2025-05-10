@@ -48,4 +48,3 @@ class AndroidExportPlugin extends EditorExportPlugin:
 	func _get_name():
 		return pluginName
 	
-

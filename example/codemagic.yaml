@@ -1,0 +1,31 @@
+workflows:
+  ios-build:
+    name: iOS Godot Build
+    environment:
+      flutter: stable
+      xcode: latest
+    scripts:
+      # Step 1: Install Flutter dependencies
+      - name: Install Flutter dependencies
+        script: |
+          flutter pub get
+          cd ios
+          pod install
+
+      # Step 2: Build iOS project
+      - name: Build iOS project
+        script: |
+          flutter build ios --release
+
+      # Step 3: Optional: Build SwiftGodot as .xcframework if needed (example)
+      - name: Build SwiftGodot xcframework
+        script: |
+          # Add the necessary commands to build SwiftGodot as xcframework here
+          # For example:
+          # cd path_to_SwiftGodot
+          # xcodebuild archive -scheme SwiftGodot -archivePath build/SwiftGodot.xcarchive
+          # xcodebuild -create-xcframework -framework build/SwiftGodot.xcarchive/Products/Library/Frameworks/SwiftGodot.framework -output build/SwiftGodot.xcframework
+
+    artifacts:
+      # Save the ipa file generated after the build
+      - build/ios/ipa/*.ipa

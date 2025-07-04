@@ -35,7 +35,7 @@ func _on_BackButton_pressed():
 
 
 func examp(ourExampleTxt: String):
-	flutterData(ourExampleTxt)
+	#flutterData(ourExampleTxt)
 	#we send our flutter data to here
 
 	print("data received inside handler 'examp' for signal 'get_stang' ----> "+ourExampleTxt)

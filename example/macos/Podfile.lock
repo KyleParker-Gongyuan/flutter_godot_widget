@@ -1,0 +1,22 @@
+PODS:
+  - flutter_godot_widget (0.0.1):
+    - FlutterMacOS
+  - FlutterMacOS (1.0.0)
+
+DEPENDENCIES:
+  - flutter_godot_widget (from `Flutter/ephemeral/.symlinks/plugins/flutter_godot_widget/macos`)
+  - FlutterMacOS (from `Flutter/ephemeral`)
+
+EXTERNAL SOURCES:
+  flutter_godot_widget:
+    :path: Flutter/ephemeral/.symlinks/plugins/flutter_godot_widget/macos
+  FlutterMacOS:
+    :path: Flutter/ephemeral
+
+SPEC CHECKSUMS:
+  flutter_godot_widget: 028c0e921fd1398e27726c77b52b40c5c5e661e3
+  FlutterMacOS: 8f6f14fa908a6fb3fba0cd85dbd81ec4b251fb24
+
+PODFILE CHECKSUM: 236401fc2c932af29a9fcf0e97baeeb2d750d367
+
+COCOAPODS: 1.16.2

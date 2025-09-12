@@ -1,0 +1,28 @@
+PODS:
+  - Flutter (1.0.0)
+  - flutter_godot_widget (0.0.1):
+    - Flutter
+  - integration_test (0.0.1):
+    - Flutter
+
+DEPENDENCIES:
+  - Flutter (from `Flutter`)
+  - flutter_godot_widget (from `.symlinks/plugins/flutter_godot_widget/ios`)
+  - integration_test (from `.symlinks/plugins/integration_test/ios`)
+
+EXTERNAL SOURCES:
+  Flutter:
+    :path: Flutter
+  flutter_godot_widget:
+    :path: ".symlinks/plugins/flutter_godot_widget/ios"
+  integration_test:
+    :path: ".symlinks/plugins/integration_test/ios"
+
+SPEC CHECKSUMS:
+  Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
+  flutter_godot_widget: 3d40fde7eb938ec8155147f5dc7388d45945677e
+  integration_test: 4a889634ef21a45d28d50d622cf412dc6d9f586e
+
+PODFILE CHECKSUM: 6026fc665be167bcf051a7368991f31e169eef09
+
+COCOAPODS: 1.16.2

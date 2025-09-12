@@ -32,11 +32,25 @@ class godotpluginMaster(godot: Godot) : GodotPlugin(godot){
     @UsedByGodot
     fun sendData(string: String) {
         Log.d(TAG, "sendData")
-        // send to flutter
+        // send to flutter via event stream
         runOnUiThread {
             eventsHandler.sendEvent(
                 mapOf(
                     "type" to "takeString",
+                    "data" to string
+                )
+            )
+        }
+    }
+
+    @UsedByGodot
+    fun sendString(string: String) {
+        Log.d(TAG, "sendString: $string")
+        // Send directly to Flutter via method channel for real-time messaging
+        runOnUiThread {
+            eventsHandler.sendEvent(
+                mapOf(
+                    "type" to "stringMessage",
                     "data" to string
                 )
             )

@@ -27,9 +27,19 @@ abstract class FlutterGodotWidgetPlatform extends PlatformInterface {
     throw UnimplementedError('platformVersion() has not been implemented.');
   }
   Future<void> openGame() {
-    throw UnimplementedError('platformVersion() has not been implemented.');
+    throw UnimplementedError('openGame() has not been implemented.');
   }
   Future<String?> sendData2Game(String data) {
-    throw UnimplementedError('platformVersion() has not been implemented.');
+    throw UnimplementedError('sendData2Game() has not been implemented.');
+  }
+  
+  /// Set the .pck file name to load (without reloading)
+  Future<String?> setPckName(String pckName) {
+    throw UnimplementedError('setPckName() has not been implemented.');
+  }
+  
+  /// Reload Godot engine with the specified .pck file
+  Future<String?> reloadGodot({String? pckName}) {
+    throw UnimplementedError('reloadGodot() has not been implemented.');
   }
 }

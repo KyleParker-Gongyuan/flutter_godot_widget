@@ -35,4 +35,53 @@ class MethodChannelFlutterGodotWidget extends FlutterGodotWidgetPlatform {
     }
     return"";
   }
+
+  /// Send a string to native platform (iOS/Android)
+  Future<String?> sendStringToNative(String data) async {
+    try {
+      final result = await methodChannel.invokeMethod<String>('sendString', {'data': data});
+      return result;
+    } catch (e) {
+      print('Error sending string to native: $e');
+      return null;
+    }
+  }
+
+  /// Register a callback to receive strings from native platform
+  void setOnStringFromNativeHandler(void Function(String data) handler) {
+    methodChannel.setMethodCallHandler((call) async {
+      if (call.method == 'onStringFromNative') {
+        final data = call.arguments['data'] as String?;
+        if (data != null) {
+          handler(data);
+        }
+      }
+    });
+  }
+
+  @override
+  Future<String?> setPckName(String pckName) async {
+    try {
+      final result = await methodChannel.invokeMethod<String>('setPckName', {'pckName': pckName});
+      return result;
+    } catch (e) {
+      print('Error setting PCK name: $e');
+      return null;
+    }
+  }
+
+  @override
+  Future<String?> reloadGodot({String? pckName}) async {
+    try {
+      final Map<String, dynamic> args = {};
+      if (pckName != null) {
+        args['pckName'] = pckName;
+      }
+      final result = await methodChannel.invokeMethod<String>('reloadGodot', args);
+      return result;
+    } catch (e) {
+      print('Error reloading Godot: $e');
+      return null;
+    }
+  }
 }

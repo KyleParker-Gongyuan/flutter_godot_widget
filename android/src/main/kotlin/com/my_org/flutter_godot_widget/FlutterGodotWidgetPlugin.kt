@@ -90,8 +90,13 @@ class FlutterGodotWidgetPlugin : FlutterPlugin, MethodCallHandler, ActivityAware
             })
         )
 
+        // Register both method channels for compatibility
         channel = MethodChannel(binding.binaryMessenger, "flutter_godot_widget_plugin")
         channel.setMethodCallHandler(this)
+        
+        // Also register the library method channel
+        val libraryChannel = MethodChannel(binding.binaryMessenger, "flutter_godot_widget")
+        libraryChannel.setMethodCallHandler(this)
     }
 
     override fun onDetachedFromEngine(binding: FlutterPluginBinding) {
@@ -122,6 +127,21 @@ class FlutterGodotWidgetPlugin : FlutterPlugin, MethodCallHandler, ActivityAware
                 }
             }
 
+            "sendString" -> {
+                val data = call.argument<String>("data")
+                Log.d(TAG, "Received string from Flutter: $data")
+                data?.let {
+                    // Send to Godot
+                    val godot = mGodot
+                    if(godot != null) {
+                        GodotPlugin.emitSignal(godot, godotpluginMaster.PLUGIN_NAME, godotpluginMaster.SHOW_STRANG, it)
+                    }
+                    result.success("Android received: $data")
+                } ?: run {
+                    result.error("MISSING_DATA", "Data argument is missing", null)
+                }
+            }
+
             "getIntentData" -> {
                 val intent = activity!!.intent
                 val bundle = intent.extras
@@ -135,6 +155,11 @@ class FlutterGodotWidgetPlugin : FlutterPlugin, MethodCallHandler, ActivityAware
                 result.notImplemented()
             }
         }
+    }
+
+    // Helper method to send strings from Android/Godot back to Flutter
+    fun sendStringToFlutter(message: String) {
+        channel.invokeMethod("onStringFromNative", mapOf("data" to message))
     }
 
 

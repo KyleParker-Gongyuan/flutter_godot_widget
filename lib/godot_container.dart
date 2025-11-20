@@ -1,3 +1,4 @@
+import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -17,53 +18,54 @@ class _GodotContainerState extends State<GodotContainer> {
   final String viewType = 'godot-view';
   final Map<String, dynamic> creationParams = <String, dynamic>{};
 
-  Widget _getHybridGodotView() {
-    return PlatformViewLink(
-      surfaceFactory: (BuildContext context, PlatformViewController controller) {
-        return AndroidViewSurface(
-            controller: controller as AndroidViewController,
-            hitTestBehavior: PlatformViewHitTestBehavior.opaque,
-            gestureRecognizers: const <Factory<OneSequenceGestureRecognizer>>{});
-      },
-      onCreatePlatformView: (PlatformViewCreationParams params) {
-        return PlatformViewsService.initExpensiveAndroidView(
-          id: params.id,
-          viewType: viewType,
-          layoutDirection: TextDirection.ltr,
-          creationParams: creationParams,
-          creationParamsCodec: const StandardMessageCodec(),
-          onFocus: () {
-            params.onFocusChanged(true);
-          },
-        )
-          ..addOnPlatformViewCreatedListener(params.onPlatformViewCreated)
-          ..create();
-      },
+  Widget _getIOSGodotView() {
+    // iOS-specific platform view
+    return UiKitView(
       viewType: viewType,
+      layoutDirection: TextDirection.ltr,
+      creationParams: creationParams,
+      creationParamsCodec: const StandardMessageCodec(),
+      gestureRecognizers: const <Factory<OneSequenceGestureRecognizer>>{},
     );
   }
 
-  Widget _getVDGodotView() {
+  Widget _getAndroidGodotView() {
+    // Android-specific platform view
     return AndroidView(
       viewType: viewType,
-      // onPlatformViewCreated: (int id) {
-      //   _channel.invokeMethod('setGodotViewId', {"id": id});
-      // },
+      layoutDirection: TextDirection.ltr,
+      creationParams: creationParams,
+      creationParamsCodec: const StandardMessageCodec(),
       gestureRecognizers: const <Factory<OneSequenceGestureRecognizer>>{},
     );
   }
 
   Widget _getGodotView() {
-    return Container(
-      key: _containerKey,
-      child: _getVDGodotView(),
-      // child: _getHybridGodotView(),
-    );
+    // Platform-aware view selection
+    if (defaultTargetPlatform == TargetPlatform.iOS) {
+      return _getIOSGodotView();
+    } else if (defaultTargetPlatform == TargetPlatform.android) {
+      return _getAndroidGodotView();
+    } else {
+      // Fallback for other platforms
+      return Container(
+        color: Colors.black,
+        child: const Center(
+          child: Text(
+            'Godot view not supported on this platform',
+            style: TextStyle(color: Colors.white),
+          ),
+        ),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return _getGodotView();
+    return Container(
+      key: _containerKey,
+      child: _getGodotView(),
+    );
   }
 
 }

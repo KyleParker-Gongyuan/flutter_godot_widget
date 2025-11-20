@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_godot_widget/flutter_godot_widget.dart';
 import 'package:flutter_godot_widget/godot_container.dart';
+import 'test_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -78,44 +79,62 @@ class _MyAppState extends State<MyApp> {
     final size = MediaQuery.of(context).size;
 
     return MaterialApp(
-      home: Scaffold(
-        body: SafeArea(
-          child: Stack(
+      home: DefaultTabController(
+        length: 2,
+        child: Scaffold(
+          appBar: AppBar(
+            title: const Text('Flutter Godot Widget'),
+            backgroundColor: Colors.blue,
+            bottom: const TabBar(
+              tabs: [
+                Tab(icon: Icon(Icons.home), text: "Original"),
+                Tab(icon: Icon(Icons.science), text: "iOS Test"),
+              ],
+            ),
+          ),
+          body: TabBarView(
             children: [
-              Visibility(
-                visible: _showGodotView,
-                // maintainState: true,
-                // maintainAnimation: true,
-                child: const GodotContainer(),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
+              // Original implementation
+              SafeArea(
+                child: Stack(
                   children: [
-                    if (_showGodotView) ...[
-                      const Expanded(child: Text("Showing Godot View")),
-                      ElevatedButton(
-                        onPressed: () {
-                          unawaited(sendData2Game("Flutter says hello!"));
-                        },
-                        child: const Text("Flutter 2 Godot"),
+                    Visibility(
+                      visible: _showGodotView,
+                      child: const GodotContainer(),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        children: [
+                          if (_showGodotView) ...[
+                            const Expanded(child: Text("Showing Godot View")),
+                            ElevatedButton(
+                              onPressed: () {
+                                unawaited(sendData2Game("Flutter says hello!"));
+                              },
+                              child: const Text("Flutter 2 Godot"),
+                            ),
+                          ] else
+                            Expanded(
+                              child: Center(
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      _showGodotView = true;
+                                    });
+                                  },
+                                  child: const Text("Show Godot View"),
+                                ),
+                              ),
+                            ),
+                        ],
                       ),
-                    ] else
-                      Expanded(
-                        child: Center(
-                          child: ElevatedButton(
-                            onPressed: () {
-                              setState(() {
-                                _showGodotView = true;
-                              });
-                            },
-                            child: const Text("Show Godot View"),
-                          ),
-                        ),
-                      ),
+                    ),
                   ],
                 ),
               ),
+              // New test page
+              const TestPage(),
             ],
           ),
         ),
